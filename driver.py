@@ -1,11 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import face_recognition
 from adapter import FaceStore, Spectrum, Person, Face
 
 class FaceRecognizer:
     def __init__(self, persons):
         self.persons = persons
+        self.mean_face = None
         self.eigfaces = None
         self.eigface_vecs = None
         self.weight_vecs = None
@@ -13,7 +13,7 @@ class FaceRecognizer:
     def __repr__(self):
         return f'FaceRecognizer(persons={len(persons)}, weight_vecs={len(weight_vecs)})'
 
-    def mean_face(self, faces):
+    def get_mean_face(self, faces):
         width, height = FaceStore.face_shape
         mean_facevec = np.zeros((1, width * height))
 
@@ -24,15 +24,18 @@ class FaceRecognizer:
         mean_facevec = np.divide(mean_facevec, float(len(faces))).flatten()
         mean_faceimg = mean_facevec.reshape(FaceStore.face_shape)
         mean_face = Face('meanface', mean_faceimg)
-
         return mean_face
 
-    def normalized_faces(self, train_faces, mean_face):
-        normalized_faceimgs = [(face.name, np.subtract(face.image, mean_face.image)) for face in train_faces]
-        normalized_faces = [Face(name, faceimg) for name, faceimg in normalized_faceimgs]
+    def normalize_faces(self, faces):
+        normalized_faces = [self.normalize_face(face) for face in faces]
         return normalized_faces
 
-    def train_faces(self):
+    def normalize_face(self, face):
+        normalized_faceimg = np.subtract(face.image, self.mean_face.image)
+        normalized_face = Face(face.name, normalized_faceimg) 
+        return normalized_face
+
+    def get_train_faces(self):
         train_faces = []
         for p in self.persons:
             face = p.faces[0]
@@ -40,7 +43,7 @@ class FaceRecognizer:
                 train_faces.append(face)
         return train_faces
 
-    def test_faces(self):
+    def get_test_faces(self):
         test_faces = []
         for p in self.persons:
             face = p.faces[1]
@@ -49,9 +52,9 @@ class FaceRecognizer:
         return test_faces
 
     def train(self):
-        train_faces = self.train_faces()
-        mean_face = self.mean_face(train_faces)
-        normalized_faces = self.normalized_faces(train_faces, mean_face)
+        train_faces = self.get_train_faces()
+        self.mean_face = self.get_mean_face(train_faces)
+        normalized_faces = self.normalize_faces(train_faces)
         normalized_facevecs = np.array([face.image.flatten() for face in normalized_faces])
 
         cov_matrix = np.cov(normalized_facevecs)
@@ -62,8 +65,6 @@ class FaceRecognizer:
         sorted_eigvalues = np.array(list(map(lambda pair: pair[0], eigpairs)))
         sorted_eigvectors = np.array(list(map(lambda pair: pair[1], eigpairs)))
 
-        # plt.plot(np.cumsum(sorted_eigvalues) / sum(sorted_eigvalues))
-        # plt.show()
         ncomponents = len(list(filter(lambda p: p < 0.95, np.cumsum(sorted_eigvalues) / sum(sorted_eigvalues))))
         components = np.array(sorted_eigvectors[:ncomponents])
         eigface_vecs = np.dot(components, np.array([f.image.flatten() for f in normalized_faces]))
@@ -79,17 +80,16 @@ class FaceRecognizer:
         self.weight_vecs = np.array(weight_vecs)
 
     def test(self):
-        test_faces = self.test_faces()
-        mean_face = self.mean_face(test_faces)
-        normalized_faces = self.normalized_faces(test_faces)
-        for face in normalized_faces:
-            weight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in self.eigface_vecs])
+        test_faces = self.get_test_faces()
 
     def recognize(face):
         '''
         recognizes a face and returns a person object
         '''
-        return persons[0]
+        normalized_face = self.normalize_face(face)
+        weight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in self.eigface_vecs])
+
+        return self.persons[0]
 
 if __name__ == '__main__':
     store = FaceStore('./dataset')
@@ -100,9 +100,10 @@ if __name__ == '__main__':
     recognizer = FaceRecognizer(persons)
     recognizer.train()
 
-    test_faces = recognizer.test_faces()
-    mean_face = recognizer.mean_face(test_faces)
-    normalized_faces = recognizer.normalized_faces(test_faces, mean_face)
+    test_faces = recognizer.get_test_faces()
+    mean_face = recognizer.get_mean_face(test_faces)
+    recognizer.mean_face = mean_face
+    normalized_faces = recognizer.normalize_faces(test_faces)
     for face in normalized_faces:
         weight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in recognizer.eigface_vecs])
 

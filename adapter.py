@@ -1,6 +1,7 @@
 import os, sys
 import cv2
 import pickle
+import matplotlib.pyplot as plt
 
 class Spectrum:
     Thermal = 'Thermal'
