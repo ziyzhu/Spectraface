@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import face_recognition
 from adapter import FaceStore, Spectrum, Person, Face
@@ -81,29 +82,43 @@ class FaceRecognizer:
 
     def test(self):
         test_faces = self.get_test_faces()
+        predictions = []
+        for face in test_faces:
+            person = self.recognize(face)
+            predictions.append(person.name)
 
-    def recognize(face):
+        correct = 0
+        for face, prediction in zip(test_faces, predictions): 
+            if face.name == prediction: 
+                correct += 1
+
+        accuracy = correct / len(test_faces)
+        print(f'Test Results: accuracy={accuracy}')
+        return accuracy
+
+    def recognize(self, face):
         '''
         recognizes a face and returns a person object
         '''
         normalized_face = self.normalize_face(face)
-        weight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in self.eigface_vecs])
-
-        return self.persons[0]
+        uweight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in self.eigface_vecs])
+        person = None
+        mindist = sys.maxsize
+        for i, kweight_vec in enumerate(self.weight_vecs):
+            dist = np.linalg.norm(kweight_vec - uweight_vec)
+            if dist < mindist: 
+                person = self.persons[i]
+                mindist = dist
+        return person
 
 if __name__ == '__main__':
     store = FaceStore('./dataset')
     # faces, exceptions = store.detect_faces(Spectrum.Thermal, True)
     faces = store.readcache('faces')
     persons = FaceStore.create_persons(faces)
-
     recognizer = FaceRecognizer(persons)
     recognizer.train()
+    recognizer.test()
+            
 
-    test_faces = recognizer.get_test_faces()
-    mean_face = recognizer.get_mean_face(test_faces)
-    recognizer.mean_face = mean_face
-    normalized_faces = recognizer.normalize_faces(test_faces)
-    for face in normalized_faces:
-        weight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in recognizer.eigface_vecs])
 
