@@ -1,7 +1,7 @@
 import os
 import pickle
 
-CACHE_DIR = './cache'
+CACHE_DIR = '../cache'
 
 def listcache(q = None):
     objnames = [fname.split('.')[0] for fname in os.listdir(CACHE_DIR)]
@@ -10,12 +10,12 @@ def listcache(q = None):
     return objnames
 
 def writecache(objname, obj):
-    with open(f'./cache/{objname}.pkl', 'wb') as f:
+    with open(f'{CACHE_DIR}/{objname}.pkl', 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def readcache(objname):
     try:
-        with open(f'./cache/{objname}.pkl', 'rb') as f:
+        with open(f'{CACHE_DIR}/{objname}.pkl', 'rb') as f:
             obj = pickle.load(f)
         return obj
     except Exception as e:
