@@ -1,10 +1,12 @@
 import os 
-import matplotlib.pyplot as plt
-import tflite_runtime.interpreter as tflite
-from PIL import Image, ImageFont, ImageDraw, ImageEnhance
-from tqdm import tqdm
 import numpy as np
 import cache
+import matplotlib.pyplot as plt
+import tflite_runtime.interpreter as tflite
+from tqdm import tqdm
+from PIL import Image, ImageFont, ImageDraw, ImageEnhance
+from facenet_pytorch import InceptionResnetV1
+from torchvision.transforms import ToTensor
 
 class Spectrum:
     Thermal = 'Thermal'
@@ -41,19 +43,23 @@ class Person:
         return f'Person(name={self.name}, faces={len(self.faces)})'
 
 class Face:
-    def __init__(self, name=None, faceimg=None, filepath=None, spec: Spectrum=None, exp: Expression=None, illmt: Illumination=None):
+    def __init__(self, name=None, image=None, code=None, filepath=None, spec: Spectrum=None, exp: Expression=None, illmt: Illumination=None):
         self.name = name
-        self.image = faceimg
+        self.image = image
         self.spectrum = spec
         self.expression = exp
         self.illumination = illmt
         self.filepath = filepath
+        self.code = code
 
     def show(self):
         self.image.show(title=self.name)
 
     def __repr__(self):
         return f'Face(name={self.name}, spectrum={self.spectrum}, expression={self.expression}, illumination={self.illumination})'
+    
+    def to_dict(self):
+        return self.__dict__
 
     @staticmethod
     def from_dict(d):
@@ -72,7 +78,7 @@ class FaceDetector:
 
         self.interpreter = interpreter
 
-    def create_persons(faces):
+    def create_persons(self, faces):
         persons = []
         for face in faces:
             person = None 
@@ -109,30 +115,23 @@ class FaceDetector:
 
         return [f'{path}/{fname}' for fname in facefiles if '.bmp' in fname]
 
-    def detect(self, spec, readcache=True, writecache=False):
-
-        if readcache:
-            dicts = cache.readcache('faces')
-            faces = [Face.from_dict(d) for d in dicts]
-            return faces
-
-        facefiles = []
-        for name in self.names:
-            for exp, illmt in zip(Expression.List, Illumination.List):
-                facefiles_exp = self.find_facefiles(name, spec=spec, exp=exp, illmt=None)
-                facefiles_illmt = self.find_facefiles(name, spec=spec, exp=None, illmt=illmt)
-                facefiles.extend(facefiles_exp + facefiles_illmt)
-
-
+    def encode(self, faces):
+        resnet = InceptionResnetV1(pretrained='vggface2').eval()
+        for face in tqdm(faces):
+            face.image = face.image.resize(reversed(EigenfaceRecognizer.DEFAULT_SHAPE))
+            tensor = resnet(ToTensor()(face.image).unsqueeze(0))
+            face.code = tensor.detach().numpy().flatten()
+        return faces
+    
+    def detect(self, faces):
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
         floating_model = input_details[0]['dtype'] == np.float32
         input_height = input_details[0]['shape'][1]
         input_width = input_details[0]['shape'][2]
                 
-        faceimgs = []
-        for f in tqdm(facefiles):
-            img = Image.open(f).resize((input_width, input_height))
+        for face in tqdm(faces):
+            img = Image.open(face.filepath).resize((input_width, input_height))
             input_data = np.expand_dims(img, axis=0)
             if floating_model:
                 input_data = (np.float32(input_data) - 127.5) / 127.5
@@ -154,15 +153,30 @@ class FaceDetector:
             # draw.rectangle(box, outline="red")
 
             cropped = img.crop(box)
-            faceimgs.append(cropped)
+            face.image = cropped
+        return faces
+
+    def collect(self, spec=Spectrum.Thermal, readcache=True, writecache=False):
+
+        if readcache:
+            dicts = cache.readcache('faces')
+            faces = [Face.from_dict(d) for d in dicts]
+            return faces
 
         faces = []
-        for faceimg, f in zip(faceimgs, facefiles):
-            face = Face(name, faceimg, f, spec, exp, illmt)
-            faces.append(face)
+        for name in self.names:
+            for exp, illmt in zip(Expression.List, Illumination.List):
+                facefiles_exp = self.find_facefiles(name, spec=spec, exp=exp, illmt=None)
+                facefiles_illmt = self.find_facefiles(name, spec=spec, exp=None, illmt=illmt)
+                facefiles = facefiles_exp + facefiles_illmt
+                for f in facefiles:
+                    faces.append(Face(name=name, filepath=f, spec=spec, exp=exp, illmt=illmt))
+        
+        faces = self.detect(faces)
+        faces = self.encode(faces)
 
         if writecache:
-            dict_list = [face.__dict__ for face in faces]
+            dict_list = [face.to_dict() for face in faces]
             cache.writecache('faces', dict_list)
 
         return faces

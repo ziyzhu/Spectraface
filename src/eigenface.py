@@ -2,30 +2,30 @@ import sys
 import numpy as np
 from detect import *
 
-DEFAULT_SHAPE = (129, 129)
-
 class EigenfaceRecognizer:
+    # DEFAULT_SHAPE = (120, 170)
+    DEFAULT_SHAPE = (16, 32)
     def __init__(self, persons):
         self.persons = persons
-        self.mean_face = None
-        self.eigfaces = None
-        self.eigface_vecs = None
-        self.weight_vecs = None
+        self.mean_face = []
+        self.eigfaces = []
+        self.eigface_vecs = []
+        self.weight_vecs = []
 
     def __repr__(self):
-        return f'EigenfaceRecognizer(persons={len(persons)}, weight_vecs={len(weight_vecs)})'
+        return f'EigenfaceRecognizer(persons={len(self.persons)}, weight_vecs={len(self.weight_vecs)})'
 
     def get_mean_face(self, faces):
-        width, height = DEFAULT_SHAPE
+        width, height = self.DEFAULT_SHAPE
         mean_facevec = np.zeros((1, width * height))
 
         for face in faces:
-            facevec = face.image.flatten()
+            facevec = face.code
             mean_facevec = np.add(mean_facevec, facevec)
 
         mean_facevec = np.divide(mean_facevec, float(len(faces))).flatten()
-        mean_faceimg = mean_facevec.reshape(DEFAULT_SHAPE)
-        mean_face = Face('meanface', mean_faceimg)
+        mean_faceimg = mean_facevec.reshape(self.DEFAULT_SHAPE)
+        mean_face = Face('meanface', image=mean_faceimg, code=mean_facevec)
         return mean_face
 
     def normalize_faces(self, faces):
@@ -33,31 +33,46 @@ class EigenfaceRecognizer:
         return normalized_faces
 
     def normalize_face(self, face):
-        normalized_faceimg = np.subtract(face.image, self.mean_face.image)
-        normalized_face = Face(face.name, normalized_faceimg) 
+        normalized_facevec = np.subtract(face.code, self.mean_face.code)
+        normalized_face = Face(name=face.name, code=normalized_facevec) 
         return normalized_face
 
     def get_train_faces(self):
         train_faces = []
         for p in self.persons:
-            face = p.faces[0]
+            face = self.get_mean_face(p.faces)
+            # face = p.faces[0]
             if face:
                 train_faces.append(face)
         return train_faces
 
     def get_test_faces(self):
         test_faces = []
-        for p in self.persons:
-            face = p.faces[1]
-            if face:
-                test_faces.append(face)
+        for i, p in enumerate(self.persons):
+            if i > 0:
+                test_faces.extend(p.faces)
+                #face = p.faces[1]
+                #if face:
+                #    test_faces.append(face)
         return test_faces
+
+    def recognize(self, face):
+        normalized_face = self.normalize_face(face)
+        uweight_vec = np.array([np.dot(vec, face.code) for vec in self.eigface_vecs])
+        person = None
+        mindist = sys.maxsize
+        for i, kweight_vec in enumerate(self.weight_vecs):
+            dist = np.linalg.norm(kweight_vec - uweight_vec)
+            if dist < mindist: 
+                person = self.persons[i]
+                mindist = dist
+        return person
 
     def train(self):
         train_faces = self.get_train_faces()
         self.mean_face = self.get_mean_face(train_faces)
         normalized_faces = self.normalize_faces(train_faces)
-        normalized_facevecs = np.array([face.image.flatten() for face in normalized_faces])
+        normalized_facevecs = np.array([face.code for face in normalized_faces])
 
         cov_matrix = np.cov(normalized_facevecs)
         eigvalues, eigvectors = np.linalg.eig(cov_matrix)
@@ -69,12 +84,12 @@ class EigenfaceRecognizer:
 
         ncomponents = len(list(filter(lambda p: p < 0.95, np.cumsum(sorted_eigvalues) / sum(sorted_eigvalues))))
         components = np.array(sorted_eigvectors[:ncomponents])
-        eigface_vecs = np.dot(components, np.array([f.image.flatten() for f in normalized_faces]))
-        eigfaces = [Face(f'eigenface{i}', vec.reshape(DEFAULT_SHAPE)) for i, vec in enumerate(eigface_vecs)]
+        eigface_vecs = np.dot(components, np.array([face.code for face in normalized_faces]))
+        eigfaces = [Face(f'eigenface{i}', vec.reshape(self.DEFAULT_SHAPE)) for i, vec in enumerate(eigface_vecs)]
 
         weight_vecs = []
         for face in normalized_faces:
-            weight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in eigface_vecs])
+            weight_vec = np.array([np.dot(vec, face.code) for vec in eigface_vecs])
             weight_vecs.append(weight_vec)
 
         self.eigfaces = eigfaces
@@ -93,22 +108,7 @@ class EigenfaceRecognizer:
             if face.name == prediction: 
                 correct += 1
 
-        accuracy = correct / len(test_faces)
-        print(f'Test Results: accuracy={accuracy}')
+        accuracy = round(100 * correct / len(test_faces), 3)
+        print(f'Test Results: accuracy={accuracy}%')
         return accuracy
-
-    def recognize(self, face):
-        '''
-        recognizes a face and returns a person object
-        '''
-        normalized_face = self.normalize_face(face)
-        uweight_vec = np.array([np.dot(vec, face.image.flatten()) for vec in self.eigface_vecs])
-        person = None
-        mindist = sys.maxsize
-        for i, kweight_vec in enumerate(self.weight_vecs):
-            dist = np.linalg.norm(kweight_vec - uweight_vec)
-            if dist < mindist: 
-                person = self.persons[i]
-                mindist = dist
-        return person
 
