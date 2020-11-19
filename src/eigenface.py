@@ -3,8 +3,7 @@ import numpy as np
 from detect import *
 
 class EigenfaceRecognizer:
-    # DEFAULT_SHAPE = (120, 170)
-    DEFAULT_SHAPE = (16, 32)
+    DEFAULT_SHAPE = (16, 32) # 16 * 32 = 512 
     def __init__(self, persons):
         self.persons = persons
         self.mean_face = []
@@ -41,7 +40,6 @@ class EigenfaceRecognizer:
         train_faces = []
         for p in self.persons:
             face = self.get_mean_face(p.faces)
-            # face = p.faces[0]
             if face:
                 train_faces.append(face)
         return train_faces
@@ -51,9 +49,6 @@ class EigenfaceRecognizer:
         for i, p in enumerate(self.persons):
             if i > 0:
                 test_faces.extend(p.faces)
-                #face = p.faces[1]
-                #if face:
-                #    test_faces.append(face)
         return test_faces
 
     def recognize(self, face):

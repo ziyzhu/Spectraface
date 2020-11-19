@@ -1,7 +1,13 @@
 appnope==0.1.0
 backcall==0.2.0
+certifi==2020.11.8
+chardet==3.0.4
 cycler==0.10.0
+dataclasses==0.6
 decorator==4.4.2
+facenet-pytorch==2.5.0
+future==0.18.2
+idna==2.10
 ipython==7.19.0
 ipython-genutils==0.2.0
 jedi==0.17.2
@@ -17,8 +23,13 @@ ptyprocess==0.6.0
 Pygments==2.7.2
 pyparsing==2.4.7
 python-dateutil==2.8.1
+requests==2.25.0
 six==1.15.0
 tflite-runtime @ https://github.com/google-coral/pycoral/releases/download/release-frogfish/tflite_runtime-2.5.0-cp38-cp38-macosx_10_15_x86_64.whl
+torch==1.7.0
+torchvision==0.8.1
 tqdm==4.52.0
 traitlets==5.0.5
+typing-extensions==3.7.4.3
+urllib3==1.26.2
 wcwidth==0.2.5

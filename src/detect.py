@@ -145,10 +145,10 @@ class FaceDetector:
             nboxes = self.interpreter.get_tensor(output_details[3]['index'])
 
             maxindex = np.argmax(confidences[0])
-            # width == height == 192px
-            box = boxes[0][maxindex] * 192 
+            box = boxes[0][maxindex] * 192 # width == height == 192px
             box = [box[1], box[0], box[3], box[2]]
 
+            # (optional)
             # draw = ImageDraw.Draw(img)
             # draw.rectangle(box, outline="red")
 
@@ -157,7 +157,6 @@ class FaceDetector:
         return faces
 
     def collect(self, spec=Spectrum.Thermal, readcache=True, writecache=False):
-
         if readcache:
             dicts = cache.readcache('faces')
             faces = [Face.from_dict(d) for d in dicts]
