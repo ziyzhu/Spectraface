@@ -10,12 +10,14 @@ if __name__ == '__main__':
     persons = detector.create_persons(faces)
 
     random.shuffle(faces)
-    partition = int(len(faces) * 0.25)
-    test_faces = faces[:partition]
+    partition = int(len(faces) * 0.75)
+    train_faces = faces[:partition]
+    test_faces = faces[partition:]
 
-    recog = EigenfaceRecognizer(persons)
+    train_persons = detector.create_persons(train_faces)
     test_persons = detector.create_persons(test_faces)
-    recog.train(persons)
+    recog = EigenfaceRecognizer(train_persons)
+    recog.train(train_persons)
     recog.test(test_persons)
 
 

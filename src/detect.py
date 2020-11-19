@@ -158,7 +158,7 @@ class FaceDetector:
 
     def collect(self, spec=Spectrum.Thermal, readcache=True, writecache=False):
         if readcache:
-            dicts = cache.readcache('faces')
+            dicts = cache.readcache(f'faces_{spec}')
             faces = [Face.from_dict(d) for d in dicts]
             return faces
 
@@ -176,7 +176,7 @@ class FaceDetector:
 
         if writecache:
             dict_list = [face.to_dict() for face in faces]
-            cache.writecache('faces', dict_list)
+            cache.writecache(f'faces_{spec}', dict_list)
 
         return faces
 

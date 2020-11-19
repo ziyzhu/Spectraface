@@ -4,7 +4,7 @@ import pickle
 CACHE_DIR = '../cache'
 
 def listcache(q = None):
-    objnames = [fname.split('.')[0] for fname in os.listdir(CACHE_DIR)]
+    objnames = [fname.split('.')[0] for fname in os.listdir(CACHE_DIR) if '.pkl' in fname]
     if q:
         objnames = [objname for objname in objnames if q in objname]
     return objnames
