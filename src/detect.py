@@ -1,12 +1,11 @@
 import os 
 import numpy as np
-import cache
-import matplotlib.pyplot as plt
 import tflite_runtime.interpreter as tflite
 from tqdm import tqdm
 from PIL import Image, ImageFont, ImageDraw, ImageEnhance
-from facenet_pytorch import InceptionResnetV1
-from torchvision.transforms import ToTensor
+
+import cache
+from encode import Encoder
 
 class Spectrum:
     Thermal = 'Thermal'
@@ -52,6 +51,9 @@ class Face:
         self.filepath = filepath
         self.code = code
 
+    def encode(self):
+        return f'{self.name}_{self.spectrum}_{self.expression}_{self.illumination}'
+
     def show(self):
         self.image.show(title=self.name)
 
@@ -75,7 +77,6 @@ class FaceDetector:
 
         interpreter = tflite.Interpreter(model_path=model_path)
         interpreter.allocate_tensors()
-
         self.interpreter = interpreter
 
     def create_persons(self, faces):
@@ -114,14 +115,6 @@ class FaceDetector:
             facefiles = list(filter(lambda fname: fname[0] == 'V', facefiles))
 
         return [f'{path}/{fname}' for fname in facefiles if '.bmp' in fname]
-
-    def encode(self, faces):
-        resnet = InceptionResnetV1(pretrained='vggface2').eval()
-        for face in tqdm(faces):
-            face.image = face.image.resize(reversed(EigenfaceRecognizer.DEFAULT_SHAPE))
-            tensor = resnet(ToTensor()(face.image).unsqueeze(0))
-            face.code = tensor.detach().numpy().flatten()
-        return faces
     
     def detect(self, faces):
         input_details = self.interpreter.get_input_details()
@@ -156,9 +149,9 @@ class FaceDetector:
             face.image = cropped
         return faces
 
-    def collect(self, spec=Spectrum.Thermal, readcache=True, writecache=False):
+    def collect(self, spec=Spectrum.Thermal, encoder=Encoder('vggface2'), readcache=True, writecache=False):
         if readcache:
-            dicts = cache.readcache(f'faces_{spec}')
+            dicts = cache.readcache(f'faces_{spec}_{encoder.name}')
             faces = [Face.from_dict(d) for d in dicts]
             return faces
 
@@ -172,11 +165,12 @@ class FaceDetector:
                     faces.append(Face(name=name, filepath=f, spec=spec, exp=exp, illmt=illmt))
         
         faces = self.detect(faces)
-        faces = self.encode(faces)
+        for face in tqdm(faces):
+            face.code = encoder.encode(face.image)
 
         if writecache:
             dict_list = [face.to_dict() for face in faces]
-            cache.writecache(f'faces_{spec}', dict_list)
+            cache.writecache(f'faces_{spec}_{encoder.name}', dict_list)
 
         return faces
 

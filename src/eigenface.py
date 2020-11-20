@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+
 from detect import *
 
 class EigenfaceRecognizer:
@@ -107,7 +108,7 @@ class EigenfaceRecognizer:
         print(f'accuracy: {accuracy}%')
         
         ''' 
-        used to determine threshold value
+        used to determine the threshold value of recognize() function 
         accuracy: 46.341%
         minimum distance for failures: 0.20356772199981246
         average distance for failures: 0.3220990237957095
