@@ -1,6 +1,6 @@
 ## About
 
-Achieving state-of-the-art thermal face recognition accuracy with a very simple algorithm using pretrained vggface2 and Eigenface (less than 500 lines of code including training script).
+Achieving state-of-the-art thermal face recognition accuracy with a very simple algorithm using pretrained vggface2 and Eigenface (less than 500 lines of code including optional training script).
 
 Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
