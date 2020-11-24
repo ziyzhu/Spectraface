@@ -6,14 +6,36 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
 ## Downloading Dataset:
 
-1. download from: http://vcipl-okstate.org/pbvs/bench/Data/02/download.html
-2. place all the downloaded collections under "./dataset".
+download from (http://vcipl-okstate.org/pbvs/bench/Data/02/download.html) and place all the downloaded collections under "./dataset".
+
+OR 
+```
+cd thermal-face-recognition/dataset
+```
+```
+wget -r -np -nd -l 1 -A zip http://vcipl-okstate.org/pbvs/bench/Data/02/download.html
+```
+```
+unzip "*.zip"
+unzip *.zip
+```
+2. 
+
+### Sample thermal and visual face images: 
+![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample1.bmp)
+![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample2.bmp)
+![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample3.bmp)
+![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample4.bmp)
+![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample5.bmp)
+![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample6.bmp)
 
 ## Running:
 
-1. (optional) python3 -m venv thermal-face-recognition && source thermal-face-recognition/bin/activate
-2. pip3 install -r requirements.txt
-3. python3 main.py
+1. ```git clone https://github.com/zachzhu2016/thermal-face-recognition.git```
+2. ```(optional) python3 -m venv thermal-face-recognition```
+3. ```cd thermal-face-recognition```
+4. ```pip3 install -r requirements.txt```
+5. ```python3 src/main.py```
 
 ## Files
 
@@ -38,3 +60,4 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 5. Thermal Infrared Face Recognition – A Biometric Identification Technique for Robust Security system (https://www.intechopen.com/books/reviews-refinements-and-new-ideas-in-face-recognition/thermal-infrared-face-recognition-a-biometric-identification-technique-for-robust-security-system)
 6. FaceNet: A Unified Embedding for Face Recognition and Clustering (https://arxiv.org/pdf/1503.03832.pdf)
 7. Face Recognition Using Pytorch (https://github.com/timesler/facenet-pytorch)
+
