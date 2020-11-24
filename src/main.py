@@ -7,7 +7,7 @@ from encode import Encoder
 
 def demo(title, detector, encoder, faces):
     persons = detector.create_persons(faces.copy())
-    strangers = random.choices(persons, k=5)
+    strangers = random.choices(persons, k=3)
     stranger_faces = [face for stranger in strangers for face in stranger.faces]
     sample_faces = [face for face in faces if face not in stranger_faces]
 
@@ -20,7 +20,7 @@ def demo(title, detector, encoder, faces):
     test_persons = detector.create_persons(test_faces.copy())
 
     recog = EigenfaceRecognizer(train_persons.copy())
-    recog.train(verbose=False)
+    recog.train(verbose=True)
 
     accuracy_test = recog.test(test_persons.copy())   
     accuracy_stranger = recog.test(strangers.copy()) 
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     visual_faces = detector.collect(Spectrum.Visual, encoder=encoder, readcache=True, writecache=False)
 
     demo("Thermal Face Recognition with vggface2: ", detector, encoder, thermal_faces)
-    demo("Thermal Face Recognition with tuned vggface2: ", detector, tuned_encoder, thermal_faces)
-    demo("Visual Face Recognition with vggface2: ", detector, encoder, visual_faces)
+    # demo("Thermal Face Recognition with tuned vggface2: ", detector, tuned_encoder, thermal_faces)
+    # demo("Visual Face Recognition with vggface2: ", detector, encoder, visual_faces)
 
 
