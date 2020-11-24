@@ -22,8 +22,8 @@ def demo(title, detector, encoder, faces):
     recog = EigenfaceRecognizer(train_persons.copy())
     recog.train(verbose=False)
 
-    accuracy_test = recog.test(test_persons.copy())   # test test faces
-    accuracy_stranger = recog.test(strangers.copy())  # test unseen faces
+    accuracy_test = recog.test(test_persons.copy())   
+    accuracy_stranger = recog.test(strangers.copy()) 
     print()
     print(title)
     print(f'Accuracy for recognizing test faces: {accuracy_test}')
