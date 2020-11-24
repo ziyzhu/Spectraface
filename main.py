@@ -20,7 +20,7 @@ def demo(title, detector, encoder, faces):
     test_persons = detector.create_persons(test_faces.copy())
 
     recog = EigenfaceRecognizer(train_persons.copy())
-    recog.train(verbose=True)
+    recog.train(verbose=False)
 
     accuracy_test = recog.test(test_persons.copy())   
     accuracy_stranger = recog.test(strangers.copy()) 
@@ -31,17 +31,15 @@ def demo(title, detector, encoder, faces):
 
 if __name__ == '__main__':
 
-    detection_model_path = '../models/thermal_face_automl_edge_fast.tflite'
-    detector = FaceDetector(base_folder='../dataset', model_path=detection_model_path)
+    detection_model_path = 'models/thermal_face_automl_edge_fast.tflite'
+    detector = FaceDetector(base_folder='dataset', model_path=detection_model_path)
 
-    tuned_encoder = Encoder('tuned_vggface2')
     encoder = Encoder('vggface2')
 
     thermal_faces = detector.collect(Spectrum.Thermal, encoder=encoder)
     visual_faces = detector.collect(Spectrum.Visual, encoder=encoder)
 
     demo("Thermal Face Recognition with vggface2: ", detector, encoder, thermal_faces.copy())
-    demo("Thermal Face Recognition with tuned vggface2: ", detector, tuned_encoder, thermal_faces.copy())
     demo("Visual Face Recognition with vggface2: ", detector, encoder, visual_faces.copy())
 
 

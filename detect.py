@@ -169,7 +169,7 @@ class FaceDetector:
         for face in tqdm(faces):
             face.code = encoder.encode(face.image)
 
-        if writecache or not cached_file;
+        if writecache or not cached_file:
             for face in faces: 
                 face.image = np.array(face.image)
             dict_list = [face.to_dict() for face in faces]

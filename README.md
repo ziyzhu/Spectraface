@@ -11,7 +11,7 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
 ## Running:
 
-1. (optional) python3 -m venv thermal-face-recognition
+1. (optional) python3 -m venv thermal-face-recognition && source thermal-face-recognition/bin/activate
 2. pip3 install -r requirements.txt
 3. python3 main.py
 
