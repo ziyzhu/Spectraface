@@ -171,7 +171,7 @@ class FaceDetector:
 
         if writecache or not cached_file:
             for face in faces: 
-                face.image = np.array(face.image)
+                face.image = None # quick fix 
             dict_list = [face.to_dict() for face in faces]
             cache.writecache(f'faces_{spec}_{encoder.name}', dict_list)
 
