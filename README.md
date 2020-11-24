@@ -18,7 +18,6 @@ wget -r -np -nd -l 1 -A zip http://vcipl-okstate.org/pbvs/bench/Data/02/download
 ```
 unzip "*.zip" && rm *.zip
 ```
-2. 
 
 ### Sample thermal and visual face images: 
 ![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample1.bmp)
