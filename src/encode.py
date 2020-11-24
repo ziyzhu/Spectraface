@@ -12,8 +12,7 @@ import shutil
 import torch
 
 class Encoder: 
-    def __init__(self, encoder_name, train_dir='../train', model_path='../models/vggface2_tuned', input_shape=(160, 160)):
-
+    def __init__(self, encoder_name, train_dir='../train', model_path='../models/tuned_vggface2', input_shape=(160, 160)):
         self.name = encoder_name
         self.train_dir = train_dir
         self.model_path = model_path
@@ -26,6 +25,10 @@ class Encoder:
             self.load_tuned_model()
         else:
             raise
+        self.model.eval()
+
+    def __repr__(self):
+        return f'Encoder(name={self.name}, input_shape={self.input_shape})'
     
     def encode(self, image):
         resized_image = image.resize(self.input_shape)
@@ -68,9 +71,9 @@ class Encoder:
         dataset = datasets.ImageFolder(self.train_dir, transform=trans)
         return dataset
 
-    def train(self, save_model=False):
+    def train(self, save_model=True):
         batch_size = 32
-        epochs = 8
+        epochs = 100
         workers = 0 if os.name == 'nt' else 8
 
         optimizer = optim.Adam(self.model.parameters(), lr=0.001)

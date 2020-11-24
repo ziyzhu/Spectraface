@@ -131,4 +131,4 @@ dmypy.json
 # custom
 cache/*
 dataset/*
-models/vggface2_tuned
+models/tuned_vggface2

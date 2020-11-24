@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 
 from detect import *
 
@@ -64,7 +65,7 @@ class EigenfaceRecognizer:
 
         return person
 
-    def train(self):
+    def train(self, verbose=False):
         train_faces = [self.get_mean_face(p.faces) for p in self.persons] 
         self.mean_face = self.get_mean_face(train_faces)
         normalized_faces = self.normalize_faces(train_faces)
@@ -78,7 +79,14 @@ class EigenfaceRecognizer:
         sorted_eigvalues = np.array(list(map(lambda pair: pair[0], eigpairs)))
         sorted_eigvectors = np.array(list(map(lambda pair: pair[1], eigpairs)))
 
-        ncomponents = len(list(filter(lambda p: p < 0.95, np.cumsum(sorted_eigvalues) / sum(sorted_eigvalues))))
+        components = list(filter(lambda p: p < 0.95, np.cumsum(sorted_eigvalues) / sum(sorted_eigvalues)))
+        ncomponents = len(components)
+        if verbose == True:
+            plt.xlabel('Principal Components')
+            plt.ylabel('Cumulative Sum Variance Explained')
+            plt.scatter(range(1, ncomponents + 1), components)
+            plt.show()
+
         components = np.array(sorted_eigvectors[:ncomponents])
         eigface_vecs = np.dot(components, np.array([face.code for face in normalized_faces]))
         eigfaces = [Face(f'eigenface{i}', vec.reshape(self.DEFAULT_SHAPE)) for i, vec in enumerate(eigface_vecs)]
@@ -105,7 +113,7 @@ class EigenfaceRecognizer:
                 correct += 1
 
         accuracy = round(100 * correct / len(test_faces), 3)
-        print(f'accuracy: {accuracy}%')
+        return accuracy
         
         ''' 
         used to determine the threshold value of recognize() function 
