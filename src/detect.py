@@ -150,7 +150,8 @@ class FaceDetector:
         return faces
 
     def collect(self, spec=Spectrum.Thermal, encoder=Encoder('vggface2'), readcache=True, writecache=False):
-        if readcache:
+        cached_file = cache.findcache(f'faces_{spec}_{encoder.name}')
+        if readcache and cached_file:
             dicts = cache.readcache(f'faces_{spec}_{encoder.name}')
             faces = [Face.from_dict(d) for d in dicts]
             return faces
@@ -168,7 +169,9 @@ class FaceDetector:
         for face in tqdm(faces):
             face.code = encoder.encode(face.image)
 
-        if writecache:
+        if writecache or not cached_file;
+            for face in faces: 
+                face.image = np.array(face.image)
             dict_list = [face.to_dict() for face in faces]
             cache.writecache(f'faces_{spec}_{encoder.name}', dict_list)
 

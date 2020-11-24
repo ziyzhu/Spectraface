@@ -3,11 +3,17 @@ import pickle
 
 CACHE_DIR = '../cache'
 
-def listcache(q = None):
+def listcache(q=None):
     objnames = [fname.split('.')[0] for fname in os.listdir(CACHE_DIR) if '.pkl' in fname]
     if q:
         objnames = [objname for objname in objnames if q in objname]
     return objnames
+
+def findcache(q=None):
+    caches = listcache(q)
+    if len(caches) > 0:
+        return caches[0]
+    return None 
 
 def writecache(objname, obj):
     with open(f'{CACHE_DIR}/{objname}.pkl', 'wb') as f:

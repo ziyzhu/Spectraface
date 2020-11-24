@@ -37,11 +37,11 @@ if __name__ == '__main__':
     tuned_encoder = Encoder('tuned_vggface2')
     encoder = Encoder('vggface2')
 
-    thermal_faces = detector.collect(Spectrum.Thermal, encoder=encoder, readcache=True, writecache=False)
-    visual_faces = detector.collect(Spectrum.Visual, encoder=encoder, readcache=True, writecache=False)
+    thermal_faces = detector.collect(Spectrum.Thermal, encoder=encoder)
+    visual_faces = detector.collect(Spectrum.Visual, encoder=encoder)
 
-    demo("Thermal Face Recognition with vggface2: ", detector, encoder, thermal_faces)
-    # demo("Thermal Face Recognition with tuned vggface2: ", detector, tuned_encoder, thermal_faces)
-    # demo("Visual Face Recognition with vggface2: ", detector, encoder, visual_faces)
+    demo("Thermal Face Recognition with vggface2: ", detector, encoder, thermal_faces.copy())
+    demo("Thermal Face Recognition with tuned vggface2: ", detector, tuned_encoder, thermal_faces.copy())
+    demo("Visual Face Recognition with vggface2: ", detector, encoder, visual_faces.copy())
 
 
