@@ -28,6 +28,7 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 - ./cache: contains pickle objects storing preprocessed images
 - ./models: contains pretrained thermal face detection model
 - ./src: implementation 
+- ./pictures: contains some insightful plots 
 
 ## References
 1. Face Recognition: From Traditional to Deep Learning Methods (https://arxiv.org/pdf/1811.00116.pdf)
