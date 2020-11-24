@@ -1,6 +1,6 @@
 ## About
 
-Achieving state-of-the-art thermal face recognition accuracy with a very simple algorithm using pretrained vggface2 and Eigenface (less than 500 lines of code including optional training script).
+Achieving state-of-the-art thermal face recognition accuracy with a very simple algorithm using Inception Resnet V1 (pretrained with vggface2) and Eigenface (less than 500 lines of code including optional training script).
 
 Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
@@ -19,9 +19,15 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
 - cache.py: pickle utility functions used to store and retrieve preprocessed images
 - detect.py: face detection
-- encode.py: using vggface2 to encode detected face images into descriptors fed into the Eigenface algorithm
+- encode.py: using pretrained model to encode detected face images into descriptors fed into the Eigenface algorithm
 - eigenface.py: eigenface implementation
 - main.py: driver for the program, displays test results
+
+- ./train: used to store training images for fine-tuning 
+- ./dataset: contains downloaded dataset
+- ./cache: contains pickle objects storing preprocessed images
+- ./models: contains pretrained thermal face detection model
+- ./src: implementation 
 
 ## References
 1. Face Recognition: From Traditional to Deep Learning Methods (https://arxiv.org/pdf/1811.00116.pdf)
