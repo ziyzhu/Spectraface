@@ -9,6 +9,14 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 1. download from: http://vcipl-okstate.org/pbvs/bench/Data/02/download.html
 2. place all the downloaded collections under "./dataset".
 
+### Sample thermal and visual face images: 
+![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample1.bmp)
+![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample2.bmp)
+![sample thermal image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample3.bmp)
+![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample4.bmp)
+![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample5.bmp)
+![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample6.bmp)
+
 ## Running:
 
 1. (optional) python3 -m venv thermal-face-recognition
