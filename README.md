@@ -19,9 +19,11 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
 ## Running:
 
-1. (optional) python3 -m venv thermal-face-recognition
-2. pip3 install -r requirements.txt
-3. python3 main.py
+1. git clone https://github.com/zachzhu2016/thermal-face-recognition.git
+2. (optional) python3 -m venv thermal-face-recognition
+3. cd thermal-face-recognition
+4. pip3 install -r requirements.txt
+5. python3 src/main.py
 
 ## Files
 
