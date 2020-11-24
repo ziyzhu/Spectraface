@@ -12,7 +12,7 @@ import shutil
 import torch
 
 class Encoder: 
-    def __init__(self, encoder_name, train_dir='../train', model_path='../models/tuned_vggface2', input_shape=(160, 160)):
+    def __init__(self, encoder_name, train_dir='./train', model_path='./models/tuned_vggface2', input_shape=(160, 160)):
         self.name = encoder_name
         self.train_dir = train_dir
         self.model_path = model_path
