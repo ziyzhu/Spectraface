@@ -8,7 +8,7 @@ Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
 download from (http://vcipl-okstate.org/pbvs/bench/Data/02/download.html) and place all the downloaded collections under "./dataset".
 
-OR 
+OR
 ```
 cd thermal-face-recognition/dataset
 ```
@@ -16,8 +16,7 @@ cd thermal-face-recognition/dataset
 wget -r -np -nd -l 1 -A zip http://vcipl-okstate.org/pbvs/bench/Data/02/download.html
 ```
 ```
-unzip "*.zip"
-rm *.zip
+unzip "*.zip" && rm *.zip
 ```
 2. 
 
@@ -35,22 +34,23 @@ rm *.zip
 2. ```(optional) python3 -m venv thermal-face-recognition && source thermal-face-recognition/bin/activate```
 3. ```cd thermal-face-recognition```
 4. ```pip3 install -r requirements.txt```
-5. ```python3 src/main.py```
+5. ```python3 main.py``` (any python3.x except python3.9)
+
+The first run would take about 5 - 7 mintues because it has preprocess all the raw face images. During the first run, face images are detected, cropped, and encoded into a 512 dimension array. The following runs would run within seconds given that preprocessed face images had been cached automatically. 
 
 ## Files
 
 - cache.py: pickle utility functions used to store and retrieve preprocessed images
-- detect.py: face detection
+- detect.py: face detection with pretrained model 
 - encode.py: using pretrained model to encode detected face images into descriptors fed into the Eigenface algorithm
 - eigenface.py: eigenface implementation
 - main.py: driver for the program, displays test results
 
 - ./train: used to store training images for fine-tuning 
-- ./dataset: contains downloaded dataset
+- ./dataset: contains downloaded dataset for training and testing the algorithm 
 - ./cache: contains pickle objects storing preprocessed images
 - ./models: contains pretrained thermal face detection model
-- ./src: implementation 
-- ./pictures: contains some insightful plots 
+- ./pictures: contains some insightful plots and sample data
 
 ## References
 1. Face Recognition: From Traditional to Deep Learning Methods (https://arxiv.org/pdf/1811.00116.pdf)
@@ -60,4 +60,4 @@ rm *.zip
 5. Thermal Infrared Face Recognition – A Biometric Identification Technique for Robust Security system (https://www.intechopen.com/books/reviews-refinements-and-new-ideas-in-face-recognition/thermal-infrared-face-recognition-a-biometric-identification-technique-for-robust-security-system)
 6. FaceNet: A Unified Embedding for Face Recognition and Clustering (https://arxiv.org/pdf/1503.03832.pdf)
 7. Face Recognition Using Pytorch (https://github.com/timesler/facenet-pytorch)
-
+8. A machine learning model for fast face detection in thermal images (https://github.com/maxbbraun/thermal-face)
