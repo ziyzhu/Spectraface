@@ -1,9 +1,6 @@
 ## Spectraface
 
-Achieving state-of-the-art thermal face recognition accuracy with a very simple algorithm using Inception Resnet V1 (pretrained with vggface2) and Eigenface (less than 500 lines of code including optional training script).
-
-My Paper: https://github.com/zachzhu2016/Spectraface/blob/main/paper.pdf
-Baseline: https://arxiv.org/pdf/1712.02514.pdf
+Achieving state-of-the-art thermal face recognition accuracy with a very simple algorithm using Inception Resnet V1 (pretrained with vggface2) and Eigenface (less than 500 lines of code including optional training script). ([My Paper](https://github.com/zachzhu2016/Spectraface/blob/main/paper.pdf), [Baseline](https://arxiv.org/pdf/1712.02514.pdf))
 
 ## Downloading Dataset
 
