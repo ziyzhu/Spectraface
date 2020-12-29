@@ -5,7 +5,7 @@ Achieving state-of-the-art thermal face recognition accuracy with a very simple 
 My Paper: https://github.com/zachzhu2016/Spectraface/blob/main/paper.pdf
 Baseline: https://arxiv.org/pdf/1712.02514.pdf
 
-## Downloading Dataset:
+## Downloading Dataset
 
 download from (http://vcipl-okstate.org/pbvs/bench/Data/02/download.html) and place all the downloaded collections under "./dataset".
 
@@ -32,7 +32,7 @@ unzip "*.zip" && rm *.zip
 ![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample5.bmp)
 ![sample visual image](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/sample6.bmp)
 
-## Running:
+## Running
 
 1. `git clone https://github.com/zachzhu2016/thermal-face-recognition.git`
 2. `(optional) python3 -m venv thermal-face-recognition && source thermal-face-recognition/bin/activate`
@@ -41,6 +41,9 @@ unzip "*.zip" && rm *.zip
 5. `python3 main.py` (any python3.x except python3.9)
 
 The first run would take about 5 - 7 mintues because it has preprocess all the raw face images. During the first run, face images are detected, cropped, and encoded into a 512 dimension array. The following runs would run within seconds given that preprocessed face images had been cached automatically.
+
+## Result
+![accuracy](https://github.com/zachzhu2016/thermal-face-recognition/blob/main/pictures/accuracy.png)
 
 ## Files
 
